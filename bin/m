@@ -244,8 +244,19 @@ install_bin() {
   local url="http://fastdl.mongodb.org/$os/$tarball"
 
   if ! good $url; then
-    bin_not_supported $OS $version $config
-    exit 0;
+    if [ "$distro" != "" ]; then
+      # try again without the distro part
+      distro=""
+      local tarball="mongodb-$os-$arch$distro-$version.tgz"
+      local url="http://fastdl.mongodb.org/$os/$tarball"
+      if ! good $url; then
+        bin_not_supported $OS $version $config
+        exit 0;
+      fi
+    else
+      bin_not_supported $OS $version $config
+      exit 0;
+    fi
   fi
 
   log "installing binary"
